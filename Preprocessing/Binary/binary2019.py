@@ -38,7 +38,10 @@ binData['Divider'] = perDataCleaned['Divider'].apply(lambda x: stopped_state_no 
 binData['TopSealer'] = perDataCleaned['TopSealer'].apply(lambda x: stopped_state_no if x in normal_state_values else stopped_state_yes)
 binData['Palletiser'] = perDataCleaned['Palletiser'].apply(lambda x: stopped_state_no if x in normal_state_values else stopped_state_yes)
 
-binData.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Data-Apr1/BinaryTransfomedData_2019.csv")
+binData = binData.reset_index(drop=True)
+
+binData.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Data-Apr1/BinaryTransfomedData_2019.csv", index = False)
+
 
 
 #filler - safety stopped (status 1)
@@ -56,7 +59,7 @@ binData_state_1['Divider'] = binData_state_1['Divider'].apply(lambda x: stopped_
 binData_state_1['TopSealer'] = binData_state_1['TopSealer'].apply(lambda x: stopped_state_no if x in normal_state_values else stopped_state_yes)
 binData_state_1['Palletiser'] = binData_state_1['Palletiser'].apply(lambda x: stopped_state_no if x in normal_state_values else stopped_state_yes)
 
-binData_state_1.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Data-Apr1/BinaryTransfomed_State1.csv")
+binData_state_1.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Data-Apr1/BinaryTransfomed_State1.csv", index = False)
 
 #filler - starved (status 2)
 normal_stopped_2 = [0,7,8,9,10,2] #filtering out records in which filler machines - normal state & stopped state 2
@@ -73,7 +76,7 @@ binData_state_2['Divider'] = binData_state_2['Divider'].apply(lambda x: stopped_
 binData_state_2['TopSealer'] = binData_state_2['TopSealer'].apply(lambda x: stopped_state_no if x in normal_state_values else stopped_state_yes)
 binData_state_2['Palletiser'] = binData_state_2['Palletiser'].apply(lambda x: stopped_state_no if x in normal_state_values else stopped_state_yes)
 
-binData_state_2.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Data-Apr1/BinaryTransfomed_State2.csv")
+binData_state_2.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Data-Apr1/BinaryTransfomed_State2.csv", index = False)
 
 #filler - blocked (status 3)
 normal_stopped_3 = [0,7,8,9,10,3] #filtering out records in which filler machines - normal state & stopped state 3
@@ -90,7 +93,7 @@ binData_state_3['Divider'] = binData_state_3['Divider'].apply(lambda x: stopped_
 binData_state_3['TopSealer'] = binData_state_3['TopSealer'].apply(lambda x: stopped_state_no if x in normal_state_values else stopped_state_yes)
 binData_state_3['Palletiser'] = binData_state_3['Palletiser'].apply(lambda x: stopped_state_no if x in normal_state_values else stopped_state_yes)
 
-binData_state_3.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Data-Apr1/BinaryTransfomed_State3.csv")
+binData_state_3.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Data-Apr1/BinaryTransfomed_State3.csv", index = False)
 
 #filler - faulted (status 4)
 normal_stopped_4 = [0,7,8,9,10,4] #filtering out records in which filler machines - normal state & stopped state 4
@@ -107,7 +110,7 @@ binData_state_4['Divider'] = binData_state_4['Divider'].apply(lambda x: stopped_
 binData_state_4['TopSealer'] = binData_state_4['TopSealer'].apply(lambda x: stopped_state_no if x in normal_state_values else stopped_state_yes)
 binData_state_4['Palletiser'] = binData_state_4['Palletiser'].apply(lambda x: stopped_state_no if x in normal_state_values else stopped_state_yes)
 
-binData_state_4.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Data-Apr1/BinaryTransfomed_State4.csv")
+binData_state_4.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Data-Apr1/BinaryTransfomed_State4.csv", index = False)
 
 #filler - unallocated (status 5)
 normal_stopped_5 = [0,7,8,9,10,5] #filtering out records in which filler machines - normal state & stopped state 5
@@ -124,7 +127,7 @@ binData_state_5['Divider'] = binData_state_5['Divider'].apply(lambda x: stopped_
 binData_state_5['TopSealer'] = binData_state_5['TopSealer'].apply(lambda x: stopped_state_no if x in normal_state_values else stopped_state_yes)
 binData_state_5['Palletiser'] = binData_state_5['Palletiser'].apply(lambda x: stopped_state_no if x in normal_state_values else stopped_state_yes)
 
-binData_state_5.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Data-Apr1/BinaryTransfomed_State5.csv")
+binData_state_5.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Data-Apr1/BinaryTransfomed_State5.csv", index = False)
 
 #filler - user stopped (status 6)
 normal_stopped_6 = [0,7,8,9,10,6] #filtering out records in which filler machines - normal state & stopped state 6
@@ -141,7 +144,7 @@ binData_state_6['Divider'] = binData_state_6['Divider'].apply(lambda x: stopped_
 binData_state_6['TopSealer'] = binData_state_6['TopSealer'].apply(lambda x: stopped_state_no if x in normal_state_values else stopped_state_yes)
 binData_state_6['Palletiser'] = binData_state_6['Palletiser'].apply(lambda x: stopped_state_no if x in normal_state_values else stopped_state_yes)
 
-binData_state_6.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Data-Apr1/BinaryTransfomed_State6.csv")
+binData_state_6.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Data-Apr1/BinaryTransfomed_State6.csv", index = False)
 
 
 
