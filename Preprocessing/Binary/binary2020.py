@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Thu Apr  1 08:46:11 2021
+Created on Tue Apr  6 14:48:06 2021
 
 @author: yases
 """
@@ -9,7 +9,7 @@ import pandas as pd
 from constants import normal_state_values, stopped_state_yes, stopped_state_no, normal_stopped_1, normal_stopped_2, normal_stopped_3, normal_stopped_4, normal_stopped_5, normal_stopped_6
 
 #getting the data
-perData = pd.read_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Stoppages Data/Performance Data CSV EXPORT - 2019.csv")
+perData = pd.read_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Stoppages Data/Performance Data CSV EXPORT - 2020.csv")
 
 #replacing missing values
 perData.fillna(10, inplace=True)
@@ -21,7 +21,7 @@ perData['t_stamp'] = pd.to_datetime(perData['t_stamp'])
 #cleaning the data - One record for one timestamp - selecting the last record for a particular ts
 perDataCleaned = perData.groupby('t_stamp').tail(1)
 
-perDataCleaned.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Binary Data/2019/CleanedData_NotBinary.csv", index = False)
+perDataCleaned.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Binary Data/2020/CleanedData_NotBinary.csv", index = False)
 
 # #converting the data into binary - 1 if machine is in stopped state, 0 if machine is in normal state - running, setup, runout, off
 # normal_state_values = [0,7,8,9,10]
@@ -43,7 +43,7 @@ binData['Palletiser'] = perDataCleaned['Palletiser'].apply(lambda x: stopped_sta
 
 binData = binData.reset_index(drop=True)
 
-binData.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Binary Data/2019/BinaryTransfomedData.csv", index = False)
+binData.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Binary Data/2020/BinaryTransfomedData.csv", index = False)
 
 
 
@@ -64,7 +64,7 @@ binData_state_1['Palletiser'] = binData_state_1['Palletiser'].apply(lambda x: st
 
 binData_state_1 = binData_state_1.reset_index(drop=True)
 
-binData_state_1.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Binary Data/2019/BinaryTransfomed_State1.csv", index = False)
+binData_state_1.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Binary Data/2020/BinaryTransfomed_State1.csv", index = False)
 
 # #filler - starved (status 2)
 # normal_stopped_2 = [0,7,8,9,10,2] #filtering out records in which filler machines - normal state & stopped state 2
@@ -84,7 +84,7 @@ binData_state_2['Palletiser'] = binData_state_2['Palletiser'].apply(lambda x: st
 binData_state_2 = binData_state_1.reset_index(drop=True)
 
 
-binData_state_2.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Binary Data/2019/BinaryTransfomed_State2.csv", index = False)
+binData_state_2.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Binary Data/2020/BinaryTransfomed_State2.csv", index = False)
 
 # #filler - blocked (status 3)
 # normal_stopped_3 = [0,7,8,9,10,3] #filtering out records in which filler machines - normal state & stopped state 3
@@ -104,7 +104,7 @@ binData_state_3['Palletiser'] = binData_state_3['Palletiser'].apply(lambda x: st
 binData_state_3 = binData_state_3.reset_index(drop=True)
 
 
-binData_state_3.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Binary Data/2019/BinaryTransfomed_State3.csv", index = False)
+binData_state_3.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Binary Data/2020/BinaryTransfomed_State3.csv", index = False)
 
 # #filler - faulted (status 4)
 # normal_stopped_4 = [0,7,8,9,10,4] #filtering out records in which filler machines - normal state & stopped state 4
@@ -124,7 +124,7 @@ binData_state_4['Palletiser'] = binData_state_4['Palletiser'].apply(lambda x: st
 binData_state_4 = binData_state_1.reset_index(drop=True)
 
 
-binData_state_4.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Binary Data/2019/BinaryTransfomed_State4.csv", index = False)
+binData_state_4.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Binary Data/2020/BinaryTransfomed_State4.csv", index = False)
 
 # #filler - unallocated (status 5)
 # normal_stopped_5 = [0,7,8,9,10,5] #filtering out records in which filler machines - normal state & stopped state 5
@@ -144,7 +144,7 @@ binData_state_5['Palletiser'] = binData_state_5['Palletiser'].apply(lambda x: st
 binData_state_5 = binData_state_1.reset_index(drop=True)
 
 
-binData_state_5.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Binary Data/2019/BinaryTransfomed_State5.csv", index = False)
+binData_state_5.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Binary Data/2020/BinaryTransfomed_State5.csv", index = False)
 
 # #filler - user stopped (status 6)
 # normal_stopped_6 = [0,7,8,9,10,6] #filtering out records in which filler machines - normal state & stopped state 6
@@ -164,7 +164,8 @@ binData_state_6['Palletiser'] = binData_state_6['Palletiser'].apply(lambda x: st
 binData_state_6 = binData_state_1.reset_index(drop=True)
 
 
-binData_state_6.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Binary Data/2019/BinaryTransfomed_State6.csv", index = False)
+binData_state_6.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Binary Data/2020/BinaryTransfomed_State6.csv", index = False)
+
 
 
 
