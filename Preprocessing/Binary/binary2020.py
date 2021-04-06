@@ -81,7 +81,7 @@ binData_state_2['Divider'] = binData_state_2['Divider'].apply(lambda x: stopped_
 binData_state_2['TopSealer'] = binData_state_2['TopSealer'].apply(lambda x: stopped_state_no if x in normal_state_values else stopped_state_yes)
 binData_state_2['Palletiser'] = binData_state_2['Palletiser'].apply(lambda x: stopped_state_no if x in normal_state_values else stopped_state_yes)
 
-binData_state_2 = binData_state_1.reset_index(drop=True)
+binData_state_2 = binData_state_2.reset_index(drop=True)
 
 
 binData_state_2.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Binary Data/2020/BinaryTransfomed_State2.csv", index = False)
@@ -121,7 +121,7 @@ binData_state_4['Divider'] = binData_state_4['Divider'].apply(lambda x: stopped_
 binData_state_4['TopSealer'] = binData_state_4['TopSealer'].apply(lambda x: stopped_state_no if x in normal_state_values else stopped_state_yes)
 binData_state_4['Palletiser'] = binData_state_4['Palletiser'].apply(lambda x: stopped_state_no if x in normal_state_values else stopped_state_yes)
 
-binData_state_4 = binData_state_1.reset_index(drop=True)
+binData_state_4 = binData_state_4.reset_index(drop=True)
 
 
 binData_state_4.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Binary Data/2020/BinaryTransfomed_State4.csv", index = False)
@@ -141,7 +141,7 @@ binData_state_5['Divider'] = binData_state_5['Divider'].apply(lambda x: stopped_
 binData_state_5['TopSealer'] = binData_state_5['TopSealer'].apply(lambda x: stopped_state_no if x in normal_state_values else stopped_state_yes)
 binData_state_5['Palletiser'] = binData_state_5['Palletiser'].apply(lambda x: stopped_state_no if x in normal_state_values else stopped_state_yes)
 
-binData_state_5 = binData_state_1.reset_index(drop=True)
+binData_state_5 = binData_state_5.reset_index(drop=True)
 
 
 binData_state_5.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Binary Data/2020/BinaryTransfomed_State5.csv", index = False)
@@ -161,7 +161,7 @@ binData_state_6['Divider'] = binData_state_6['Divider'].apply(lambda x: stopped_
 binData_state_6['TopSealer'] = binData_state_6['TopSealer'].apply(lambda x: stopped_state_no if x in normal_state_values else stopped_state_yes)
 binData_state_6['Palletiser'] = binData_state_6['Palletiser'].apply(lambda x: stopped_state_no if x in normal_state_values else stopped_state_yes)
 
-binData_state_6 = binData_state_1.reset_index(drop=True)
+binData_state_6 = binData_state_6.reset_index(drop=True)
 
 
 binData_state_6.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Binary Data/2020/BinaryTransfomed_State6.csv", index = False)
