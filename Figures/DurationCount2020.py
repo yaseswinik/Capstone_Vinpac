@@ -13,7 +13,7 @@ from bokeh.layouts import gridplot
 from bokeh.palettes import d3
 
 def plot_graph(df):
-    df= df.drop(depal.columns[0], axis=1)
+    df= df.drop(df.columns[0], axis=1)
     title_str = df.columns[1] + " Stoppage Duration vs Counts"
     df['duration_hr'] = df['duration_sec']/3600
     df = df.groupby(df.columns[1]).agg({'t_stamp':'count', 'duration_hr': 'sum'}).reset_index()
