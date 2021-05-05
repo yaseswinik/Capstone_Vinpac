@@ -218,7 +218,7 @@ def cons_tabs(mstatus):
     for machine in machines:
         plot_list.append(const_d_table(ss,machine))
     grid = gridplot(plot_list, ncols=3)
-    div = Div(text="""<b>"""+mstatus+""" Details</b> ,style={'font-size': '200%', 'color': 'blue'}""")
+    div = Div(text="""<b>"""+mstatus+""" Details</b>""",style={'font-size': '200%', 'color': 'blue'})
     g = column(div, grid)
     return (Panel(child = g, title=mstatus))
 

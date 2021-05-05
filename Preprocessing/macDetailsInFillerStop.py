@@ -1,51 +1,41 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon May  3 17:42:20 2021
+Created on Wed May  5 09:26:59 2021
 
 @author: yases
 """
-
-##########FILE NOT NEEDED########
-#################################
-
-
-### CHECK macDetailsInFillerStop.py for correct logic########
-
-
-
-import sqlalchemy
 import pandas as pd
+import sqlalchemy
 import psycopg2
-
 engine = sqlalchemy.create_engine('postgresql+psycopg2://admin:admin@localhost:5432/capstone')
 
-
 filler = pd.read_sql_table('Filler_Status_Change', con=engine)
-
 cleaned = pd.read_sql_table('vinpacCleaned', con=engine)
 
 
-def status_change(x, machine, s_time, e_time):
-    dfMachine = x[['t_stamp',machine]]
-    dfMachineSC = dfMachine.loc[dfMachine[machine] != dfMachine[machine].shift(1)]
-    #dfMachineSC['duration'] = dfMachineSC['t_stamp'].shift(-1) - dfDepalSC['t_stamp']
-    dfMachineSC['duration_sec'] = (dfMachineSC['t_stamp'].shift(-1) - dfMachineSC['t_stamp']).astype('timedelta64[ms]')/1000
-    tdf = dfMachineSC.groupby(machine).agg({machine:'count', 'duration_sec':'sum'}).rename(columns={machine:'Count'}).reset_index().rename(columns={machine:'Status'})
-    tdf['Machine'] = machine
-    tdf['Start_Time'] = s_time
-    tdf['End_Time'] = e_time
-    return tdf
-
-def status_det(filler_df, cleaned, f_status):
-    machines= ['Depal', 'Screwcap', 'Dynac', 'Labeller', 'Packer', 'Divider', 'Erector', 'TopSealer', 'Palletiser']
-    df = pd.DataFrame()
-    for index, row in filler_df.iterrows():
-        x = cleaned[(cleaned.t_stamp >= row['Start_Time']) & (cleaned.t_stamp <= row['End_Time'])]
-        for machine in machines:
-            df = df.append(status_change(x, machine, row['Start_Time'],row['End_Time'] ))         
-    df['Filler_Status'] = f_status   
-    return df
+def getInbetStopDet(filler_status_df, cleaned, filler_status):
+    df_grouped = pd.DataFrame()
+    for index, row in filler_status_df.iterrows():
+        tdf = cleaned.loc[(cleaned.t_stamp >= row['Start_Time']) & (cleaned.t_stamp <= row['End_Time'])]
+        tdf_time = (tdf['t_stamp'].iloc[-1] - tdf['t_stamp'].iloc[0]).seconds
+        #tdf_grouped = pd.newDataFrame()
+        for column in cleaned.columns:
+            if str(column) not in ['t_stamp', 'Filler']:
+                dfMachineSC = tdf.loc[tdf[column] != tdf[column].shift(1)]
+                if dfMachineSC.size == 1:
+                    dfMachineSC['duration_sec'] = tdf_time
+                else:
+                    dfMachineSC['duration_sec'] = (dfMachineSC['t_stamp'].shift(-1) - dfMachineSC['t_stamp']).astype('timedelta64[ms]')/1000
+                    dur = tdf_time - dfMachineSC['duration_sec'].sum()
+                    dfMachineSC['duration_sec'].fillna(dur, inplace=True)
+                tdf_grouped = dfMachineSC.groupby(column).agg({column:'count', 'duration_sec':'sum'}).rename(columns={column:'Count'}).reset_index().rename(columns={column:'Status'})
+                tdf_grouped['Machine'] = column
+                tdf_grouped['Start_Time'] = row['Start_Time']
+                tdf_grouped['End_Time'] = row['End_Time']
+                df_grouped = df_grouped.append(tdf_grouped, ignore_index=True)
+    df_grouped['Filler_Status'] = filler_status
+    return df_grouped
 
 dfn = pd.DataFrame()
 
@@ -56,8 +46,8 @@ filler_0_1['End_Time'] = filler[(filler['Filler'] == 1) & (filler['Filler'].shif
 
 fstatus = 'Safety Stopped'
 
-dfn = dfn.append(status_det(filler_0_1, cleaned, fstatus),ignore_index=True)
-
+dfn = dfn.append(getInbetStopDet(filler_0_1, cleaned, fstatus),ignore_index=True)
+del filler_0_1
 
 #Filler Starved
 filler_0_2 = pd.DataFrame()
@@ -66,7 +56,8 @@ filler_0_2['End_Time'] = filler[(filler['Filler'] == 2) & (filler['Filler'].shif
 
 fstatus = 'Starved'
 
-dfn = dfn.append(status_det(filler_0_2, cleaned, fstatus),ignore_index=True)
+dfn = dfn.append(getInbetStopDet(filler_0_2, cleaned, fstatus),ignore_index=True)
+del filler_0_2
 
 #Filler Blocked
 filler_0_3 = pd.DataFrame()
@@ -75,7 +66,8 @@ filler_0_3['End_Time'] = filler[(filler['Filler'] == 3) & (filler['Filler'].shif
 
 fstatus = 'Blocked'
 
-dfn = dfn.append(status_det(filler_0_3, cleaned, fstatus),ignore_index=True)
+dfn = dfn.append(getInbetStopDet(filler_0_3, cleaned, fstatus),ignore_index=True)
+del filler_0_3
 
 #Filler Faulted
 filler_0_4 = pd.DataFrame()
@@ -84,7 +76,8 @@ filler_0_4['End_Time'] = filler[(filler['Filler'] == 4) & (filler['Filler'].shif
 
 fstatus = 'Faulted'
 
-dfn = dfn.append(status_det(filler_0_4, cleaned, fstatus),ignore_index=True)
+dfn = dfn.append(getInbetStopDet(filler_0_4, cleaned, fstatus),ignore_index=True)
+del filler_0_4
 
 #Filler Unallocated Stopped
 filler_0_5 = pd.DataFrame()
@@ -93,8 +86,8 @@ filler_0_5['End_Time'] = filler[(filler['Filler'] == 4) & (filler['Filler'].shif
 
 fstatus = 'Unallocated'
 
-dfn = dfn.append(status_det(filler_0_5, cleaned, fstatus),ignore_index=True)
-
+dfn = dfn.append(getInbetStopDet(filler_0_5, cleaned, fstatus),ignore_index=True)
+del filler_0_5
 
 #Filler User Stopped
 filler_0_6 = pd.DataFrame()
@@ -103,9 +96,5 @@ filler_0_6['End_Time'] = filler[(filler['Filler'] == 6) & (filler['Filler'].shif
 
 fstatus = 'User Stopped'
 
-dfn = dfn.append(status_det(filler_0_6, cleaned, fstatus),ignore_index=True)
-         
-m=dfn.groupby(['Filler_Status','Machine','Status']).sum()
-
-dfn.groupby(['Machine','Filler_Status','Status']).sum().head(10)
-
+dfn = dfn.append(getInbetStopDet(filler_0_6, cleaned, fstatus),ignore_index=True)
+del filler_0_6            
