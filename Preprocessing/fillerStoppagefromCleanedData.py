@@ -79,7 +79,7 @@ dfn = dfn.append(status_det(filler_0_3, cleaned, fstatus),ignore_index=True)
 
 #Filler Faulted
 filler_0_4 = pd.DataFrame()
-filler_0_4['Start_Time'] = filler[(filler['Filler'] == 0) & (filler['Filler'].shift(-1) == 4)]['t_stamp'].reset_index(drop=True)
+filler_0_4['Start_Time'] = filler[(filler['Filler'] == 0) &  (filler['Filler'].shift(-1) == 4)]['t_stamp'].reset_index(drop=True)
 filler_0_4['End_Time'] = filler[(filler['Filler'] == 4) & (filler['Filler'].shift(1) == 0)]['t_stamp'].reset_index(drop=True)
 
 fstatus = 'Faulted'

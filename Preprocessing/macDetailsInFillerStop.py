@@ -98,3 +98,5 @@ fstatus = 'User Stopped'
 
 dfn = dfn.append(getInbetStopDet(filler_0_6, cleaned, fstatus),ignore_index=True)
 del filler_0_6            
+
+dfn.to_csv("/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/Stoppages Data/checkfile.csv")
