@@ -5,8 +5,12 @@ Created on Thu Apr 29 15:06:30 2021
 
 @author: yases
 """
+import pandas as pd
 #split the file based on change in status
+filePath = "/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/New Cleaned/cleaned2021.csv"
+df = pd.read_csv(filePath)
 
+df['t_stamp'] = pd.to_datetime(df['t_stamp'])
 
 #Depal
 dfDepal = df[['t_stamp','Depal']]
@@ -15,6 +19,8 @@ dfDepalSC = dfDepal.loc[dfDepal["Depal"] != dfDepal["Depal"].shift(1)]
 dfDepalSC['duration'] = dfDepalSC['t_stamp'].shift(-1) - dfDepalSC['t_stamp']
 dfDepalSC['duration_sec'] = dfDepalSC['duration'].astype('timedelta64[ms]')/1000
 
+toPath = "/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/New Cleaned/DepalStatusChanged2019.csv"
+dfDepalSC.to_csv(toPath, index=False)
 
 #Filler
 dfFiller = df[['t_stamp','Filler']]
@@ -23,6 +29,9 @@ dfFillerSC = dfFiller.loc[dfFiller["Filler"] != dfFiller["Filler"].shift(1)]
 dfFillerSC['duration'] = dfFillerSC['t_stamp'].shift(-1) - dfFillerSC['t_stamp']
 dfFillerSC['duration_sec'] = dfFillerSC['duration'].astype('timedelta64[ms]')/1000
 
+toPath = "/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/New Cleaned/FillerStatusChanged2021.csv"
+
+dfFillerSC.to_csv(toPath, index=False)
 
 #Screwcap
 dfScrewcap = df[['t_stamp','Screwcap']]
