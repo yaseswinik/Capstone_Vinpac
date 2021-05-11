@@ -20,8 +20,8 @@ import psycopg2
 engine = sqlalchemy.create_engine('postgresql+psycopg2://admin:admin@localhost:5432/capstone')
 df = pd.read_sql_table('MachDetFillerStoppageEachDay', con=engine)
 
-statusMapValues = {0:'Running', 1:'Safety Stopped', 2:'Starved', 3:'Blocked', 4:'Faulted', 5:'Unallocated', 6:'User Stopped', 7:'Off', 8:'Setup' , 9:'Runout', 10:'Idle'}
-df['Status'] = df['Status'].map(statusMapValues)
+# statusMapValues = {0:'Running', 1:'Safety Stopped', 2:'Starved', 3:'Blocked', 4:'Faulted', 5:'Unallocated', 6:'User Stopped', 7:'Off', 8:'Setup' , 9:'Runout', 10:'Idle'}
+# df['Status'] = df['Status'].map(statusMapValues)
 
 #df = df.loc[df.Filler_Status == 'Blocked']
 df = df.loc[df.Status != 'Running']
