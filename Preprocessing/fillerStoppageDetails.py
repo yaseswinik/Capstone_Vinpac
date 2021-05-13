@@ -19,7 +19,7 @@ import psycopg2
 engine = sqlalchemy.create_engine('postgresql+psycopg2://admin:admin@localhost:5432/capstone')
 
 
-filler = pd.read_sql_table('Filler_Status_Change', con=engine)
+filler = pd.read_sql_table('MachineDetailsFillerStoppage', con=engine)
 
 ####
 depal = pd.read_sql_table('Depal_Status_Change', con=engine)
@@ -154,6 +154,7 @@ dfn = dfn.append(status_det(filler_0_6, erector, "Erector", fstatus),ignore_inde
 dfn = dfn.append(status_det(filler_0_6, topsealer, "TopSealer", fstatus),ignore_index=True)
 dfn = dfn.append(status_det(filler_0_6, palletiser, "Palletiser", fstatus),ignore_index=True)
 
+dfn=filler
 dfn['duration_sec'] = round(dfn['duration_sec'],3)
          
 m=dfn.groupby(['Filler_Status','Machine','Status']).sum().reset_index()
@@ -184,11 +185,14 @@ from bokeh.models import ColumnDataSource, DataTable, TableColumn, Div, HTMLTemp
 #     fr = data['Count'][max_value_index]
 #     drs = data['duration_sec'][max_value_index]
 
+# dfn = pd.read_sql_table('MachineDetailsFillerStoppage', con=engine)
+# m = dfn.groupby(['Filler_Status','Machine','Status']).sum().reset_index()
+
 machines= ['Depal', 'Screwcap', 'Dynac', 'Labeller', 'Packer', 'Divider', 'Erector', 'TopSealer', 'Palletiser']
 
 def const_d_table(ss, machine):
     data = ss[ss.Machine==machine]
-    data = data[data.Status != 0]
+    data = data[data.Status != "Running"]
     max_value_index = data.index[data['duration_sec']==data['duration_sec'].max()]
     sts = data['Status'][max_value_index]
     fr = data['Count'][max_value_index]
@@ -197,7 +201,7 @@ def const_d_table(ss, machine):
     template="""                
             <div style="color:<%= 
                 (function colorfromint(){
-                    if (Status=="""+str(sts.iloc[0])+""")
+                    if (Status=="""+"'"+sts.iloc[0]+"'"+""")
                         {return('red')}
                     }()) %>;"> 
                 <%= value %>
@@ -211,6 +215,7 @@ def const_d_table(ss, machine):
 
 m_status = ['Blocked', 'Faulted', 'Safety Stopped', 'Starved', 'Unallocated', 'User Stopped']
 
+m_status = ['Safety Stopped', 'Starved']
 
 def cons_tabs(mstatus):
     plot_list = []
@@ -223,9 +228,16 @@ def cons_tabs(mstatus):
     return (Panel(child = g, title=mstatus))
 
 tabs_list = []
-
+main_tabs = []
 for mstatus in m_status:
     tabs_list.append(cons_tabs(mstatus))
-
+    #tabssub = Tabs(tabs=tabs_list)
+    #main_tabs.append(Panel(child = tabssub))
+    
 tabs = Tabs(tabs=tabs_list)
+
 show(tabs)
+
+from bokeh.embed import components
+
+components(tabs)

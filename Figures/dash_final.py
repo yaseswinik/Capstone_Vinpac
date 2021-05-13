@@ -12,7 +12,7 @@ import datetime
 
 from bokeh.models.widgets import Panel, Tabs
 from bokeh.models import ColumnDataSource, DataTable, TableColumn, Div, HTMLTemplateFormatter, DateRangeSlider, DateFormatter, CheckboxGroup, HoverTool, DaysTicker, RadioGroup
-from bokeh.layouts import column, gridplot, layout
+from bokeh.layouts import column, gridplot, layout, grid
 from bokeh.io import show, curdoc
 from bokeh.plotting import figure
 from bokeh.palettes import Category10_10
@@ -24,7 +24,61 @@ engine = sqlalchemy.create_engine('postgresql+psycopg2://admin:admin@localhost:5
 # df = df.loc[~df.Status.isin(['Running','Off'])]
 
 linedf = pd.read_sql_table('MachStoppageforFillerAllDays', con=engine)
+
+
+duration_hr = []
+
+# intervals = (
+#     ('weeks', 604800),
+#     ('days', 86400),
+#     ('hours', 3600),    # 60 * 60
+#     ('minutes', 60),
+#     ('seconds', 1)
+#     )
+
+# def display_time(seconds, granularity=2):
+    
+#     result = []
+#     for name, count in intervals:
+#         value = seconds / count
+#         if value:
+#             seconds -= value * count
+#             if value == 1:
+#                 name = name.rstrip('s')
+#             result.append("{} {}".format(value, name))
+#         return ', '.join(result[:granularity])
+
+def secondsToText(secs):
+    if secs == 0:
+        result = "0 secs"
+    else:
+        days = secs//86400
+        hours = (secs - days*86400)//3600
+        minutes = (secs - days*86400 - hours*3600)//60
+        seconds = secs - days*86400 - hours*3600 - minutes*60
+        days = round(days)
+        hours = round(hours)
+        minutes = round(minutes)
+        seconds = round(seconds,2)
+        
+        result = ("{0} day{1}, ".format(days, "s" if days!=1 else "") if days else "") + \
+        ("{0} hr{1}, ".format(hours, "s" if hours!=1 else "") if hours else "") + \
+        ("{0} min{1}, ".format(minutes, "s" if minutes!=1 else "") if minutes else "") + \
+        ("{0} sec{1}, ".format(seconds, "s" if seconds!=1 else "") if seconds else "")
+    return result
+
+for value in linedf['duration_sec']:
+    duration_hr.append(secondsToText(value))
+#linedf['duration_hr'] = pd.to_datetime(linedf["duration_sec"], unit='s').dt.strftime("%H:%M:%S")
+linedf['duration_hr']= duration_hr # pd.to_timedelta(linedf["duration_sec"]*(1e+9))
+
 linedf = linedf.loc[~linedf.Status.isin(['Running','Off'])]
+
+linedf['duration_sec'] = round(linedf['duration_sec'],3)
+
+
+
+
 
 factors_str = ["Safety Stopped", "Starved",  "Blocked", "Faulted", "Unallocated", "User Stopped","Off", "Setup","Running", "Runout" ]
 color_dict = {}
@@ -36,6 +90,12 @@ del factors_str, x, cd
 def plotoverallformachines(df):
     m=df.groupby(['Filler_Status','Machine','Status']).sum().reset_index()
     m['duration_sec'] = round(m['duration_sec'],3)
+    #m['duration_hr'] = pd.to_datetime(m["duration_sec"], unit='s').dt.strftime("%H:%M:%S")
+    duration_hr = []
+    for value in m['duration_sec']:
+        duration_hr.append(secondsToText(value))
+    m['duration_hr']= duration_hr
+
     
     def const_d_table(data, machine):
         max_value_index = data.index[data['duration_sec']==data['duration_sec'].max()]
@@ -51,8 +111,8 @@ def plotoverallformachines(df):
                 </div>
                 """
         formatter =  HTMLTemplateFormatter(template=template)
-        columns = [TableColumn(field="Status", title="Status",  formatter=formatter), TableColumn(field="Count", title="Freq",  formatter=formatter), TableColumn(field="duration_sec", title="Duration(s)",  formatter=formatter)] 
-        data_table = DataTable(source=source, columns=columns, width=275, height=200, fit_columns=True)
+        columns = [TableColumn(field="Status", title="Status",  formatter=formatter), TableColumn(field="Count", title="Freq",  formatter=formatter), TableColumn(field="duration_sec", title="Duration(s)",  formatter=formatter), TableColumn(field="duration_hr", title="Duration",  formatter=formatter)] 
+        data_table = DataTable(source=source, columns=columns, height=200, fit_columns=True)
         div = Div(text="""<b>"""+machine+""" Details</b>""")
         return (column(div, data_table))
 
@@ -97,14 +157,16 @@ def plotsubtabmachines(linedata, machine):
         ys = []
         labels = []
         colors = []
+        duration_hr = []
         status_to_use = data.Status.unique()
         for status in status_to_use:
             subset = data.loc[data['Status'] == status]
             xs.append(list(subset['Start_Time']))
             ys.append(list(subset['duration_sec']))
+            duration_hr.append(list(subset['duration_hr']))
             colors.append(color_dict.get(status))
             labels.append(status)
-        new_src_line = ColumnDataSource(data = {'x':xs, 'y': ys, 'color':colors, 'label':labels})
+        new_src_line = ColumnDataSource(data = {'x':xs, 'y': ys, 'color':colors, 'label':labels, 'duration':duration_hr})
         return new_src_line
     
     def makedataset(new_start, new_end, status_to_use ):
@@ -120,9 +182,9 @@ def plotsubtabmachines(linedata, machine):
     def make_lineplot(src):
         p = figure(plot_width = 800, plot_height = 400, title = 'Time Series Plot', x_axis_label = 'Date', y_axis_label = 'Duration in seconds', x_axis_type="datetime")
         
-        p.multi_line('x', 'y', color = 'color', legend = 'label', line_width = 3, source = src)
+        p.multi_line('x', 'y', color = 'color', legend = 'label',line_width = 1.5, source = src)
         # Hover tool with next line policy
-        hover = HoverTool(tooltips=[('Status', '@label'), ('Date', '$x{%F}'),('Duration', '$y{1.111} seconds')], line_policy = 'next')
+        hover = HoverTool(tooltips=[('Status', '@label'), ('Date', '$x{%F}'), ('Duration', '@duration'),('Duration(s)', '$y{1.111}')], line_policy = 'next')
         
         hover.formatters = { "$x": "datetime"}
         # Add the hover tool and styling
@@ -137,7 +199,7 @@ def plotsubtabmachines(linedata, machine):
     
     def make_table(source):
         datefmt = DateFormatter(format="%a, %d %b %Y")
-        columns = [TableColumn(field="Start_Time", title="Date", formatter = datefmt),TableColumn(field="Status", title="Status"), TableColumn(field="Count", title="Freq"), TableColumn(field="duration_sec", title="Duration(s)")] 
+        columns = [TableColumn(field="Start_Time", title="Date", formatter = datefmt),TableColumn(field="Status", title="Status"), TableColumn(field="Count", title="Freq"), TableColumn(field="duration_sec", title="Duration(s)"), TableColumn(field="duration_hr", title="Duration")] 
         data_table = DataTable(source=source, columns=columns, width=400, height=200, fit_columns=True)
         return data_table
     
