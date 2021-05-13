@@ -11,14 +11,6 @@ from mlxtend.frequent_patterns import association_rules
 
 
 group_stoppage_21 = pd.read_csv("MBA_Filler_Change_2021.csv")
-grouped_filler_stoppage = pd.read_csv("FillerStatusChanged2021.csv")
-
-grouped_stopped_states_21 = [1,2,3,4,5,6]
-
-
-grouped_filler_times_21 = pd.DataFrame()
-grouped_filler_times_21['Start_Time'] = grouped_filler_stoppage[(grouped_filler_stoppage['Filler'] == 0) & 
-            (grouped_filler_stoppage['Filler'].shift(-1).isin(grouped_stopped_states_21))]['t_stamp'].reset_index(drop=True)
 
 grouped_Rules_mapping_21 = group_stoppage_21
 
