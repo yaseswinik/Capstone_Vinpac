@@ -26,7 +26,7 @@ engine = sqlalchemy.create_engine('postgresql+psycopg2://admin:admin@localhost:5
 linedf = pd.read_sql_table('MachStoppageforFillerAllDays', con=engine)
 
 
-duration_hr = []
+duration_txt = []
 
 # intervals = (
 #     ('weeks', 604800),
@@ -61,16 +61,16 @@ def secondsToText(secs):
         minutes = round(minutes)
         seconds = round(seconds,2)
         
-        result = ("{0} day{1}, ".format(days, "s" if days!=1 else "") if days else "") + \
-        ("{0} hr{1}, ".format(hours, "s" if hours!=1 else "") if hours else "") + \
-        ("{0} min{1}, ".format(minutes, "s" if minutes!=1 else "") if minutes else "") + \
-        ("{0} sec{1}, ".format(seconds, "s" if seconds!=1 else "") if seconds else "")
+        result = ("{0} day{1} ".format(days, "s" if days!=1 else "") if days else "") + \
+        ("{0} hr{1} ".format(hours, "s" if hours!=1 else "") if hours else "") + \
+        ("{0} min{1} ".format(minutes, "s" if minutes!=1 else "") if minutes else "") + \
+        ("{0} sec{1} ".format(seconds, "s" if seconds!=1 else "") if seconds else "")
     return result
 
 for value in linedf['duration_sec']:
-    duration_hr.append(secondsToText(value))
+    duration_txt.append(secondsToText(value))
 #linedf['duration_hr'] = pd.to_datetime(linedf["duration_sec"], unit='s').dt.strftime("%H:%M:%S")
-linedf['duration_hr']= duration_hr # pd.to_timedelta(linedf["duration_sec"]*(1e+9))
+linedf['duration_text']= duration_txt # pd.to_timedelta(linedf["duration_sec"]*(1e+9))
 
 linedf = linedf.loc[~linedf.Status.isin(['Running','Off'])]
 
@@ -112,7 +112,7 @@ def plotoverallformachines(df):
                 """
         formatter =  HTMLTemplateFormatter(template=template)
         columns = [TableColumn(field="Status", title="Status",  formatter=formatter), TableColumn(field="Count", title="Freq",  formatter=formatter), TableColumn(field="duration_sec", title="Duration(s)",  formatter=formatter), TableColumn(field="duration_hr", title="Duration",  formatter=formatter)] 
-        data_table = DataTable(source=source, columns=columns, height=200, fit_columns=True)
+        data_table = DataTable(source=source, columns=columns, width = 500,height=210, autosize_mode = 'fit_viewport')
         div = Div(text="""<b>"""+machine+""" Details</b>""")
         return (column(div, data_table))
 
@@ -124,7 +124,7 @@ def plotoverallformachines(df):
         
     grid = gridplot(table_list, ncols=3)
     div = Div(text="""<b> Overall Details</b>""",style={'font-size': '200%', 'color': 'blue'})
-    g = column(div, grid)
+    g = column(div, grid, sizing_mode='stretch_width')
     
     return Panel(child = g, title="Overall Details")
 
@@ -200,7 +200,7 @@ def plotsubtabmachines(linedata, machine):
     def make_table(source):
         datefmt = DateFormatter(format="%a, %d %b %Y")
         columns = [TableColumn(field="Start_Time", title="Date", formatter = datefmt),TableColumn(field="Status", title="Status"), TableColumn(field="Count", title="Freq"), TableColumn(field="duration_sec", title="Duration(s)"), TableColumn(field="duration_hr", title="Duration")] 
-        data_table = DataTable(source=source, columns=columns, width=400, height=200, fit_columns=True)
+        data_table = DataTable(source=source, columns=columns, width=400, height=200, autosize_mode = 'fit_viewport')
         return data_table
     
     
@@ -222,7 +222,7 @@ def plotsubtabmachines(linedata, machine):
     
     c = column(date_range, status_selection)
     
-    b = layout([[line_plot],[c,data_table]])
+    b = layout([[line_plot],[c,data_table]], sizing_mode = 'stretch_width')
     return b
 
     ######################################

@@ -51,8 +51,7 @@ print(sec_to_hours(60*60*24+105))
 
 
 
-a = pd.Timedelta(linedf["duration_sec"])
-
+a = pd.to_timedelta(linedf["duration_sec"]*(1e+9))
 
 
 
