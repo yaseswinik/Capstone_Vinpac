@@ -41,12 +41,7 @@ grouped_rules_21_4_5['consequents'] = grouped_rules_21_4_5['consequents'].apply(
 
 ###################################### RESPONSIBLE MACHINES #################################
 
-machine_list = list(grouped_rules_21['antecedents'][ grouped_rules_21['antecedents'].str.contains("Filler_1") 
-                        | grouped_rules_21['antecedents'].str.contains("Filler_2")
-                        | grouped_rules_21['antecedents'].str.contains("Filler_3")
-                        | grouped_rules_21['antecedents'].str.contains("Filler_4")
-                        | grouped_rules_21['antecedents'].str.contains("Filler_4")
-                        | grouped_rules_21['antecedents'].str.contains("Filler_6")])
+machine_list =['Filler_1','Filler_2','Filler_3','Filler_4','Filler_5','Filler_6']
 
 responsible_machine_for_filler = pd.DataFrame()
 
@@ -57,12 +52,8 @@ responsible_machine_for_filler = responsible_machine_for_filler.sort_values(by=[
 
 Ante_string_list = list(responsible_machine_for_filler['antecedents'][ responsible_machine_for_filler['antecedents'].str.contains("_2") | responsible_machine_for_filler['antecedents'].str.contains("_3")])
 
-
 responsible_machine_for_filler_backtracking = grouped_rules_21[grouped_rules_21['consequents'].astype(str).isin(Ante_string_list)]
 responsible_machine_for_filler_backtracking = responsible_machine_for_filler_backtracking.sort_values(by=['confidence'], ascending=False)
-
-
-
 
 ###################### State_4 and state_5 ##############
 
@@ -80,9 +71,6 @@ responsible_machine_for_state_4_5.rename(columns={'confidence': 'confidence_main
 responsible_machine_for_state_4_5 = responsible_machine_for_state_4_5.drop(['antecedent support','consequent support','support','lift','leverage','conviction'],axis=1)
 responsible_machine_for_state_4_5 = responsible_machine_for_state_4_5[['Main_responsible','confidence_main_responsible','Target_machine']]
 
-
-
-
 ##################### DISPLAYING FINAL RESULTS ##############
  
 mba_results = pd.DataFrame()
@@ -98,9 +86,6 @@ final_mba_results.rename(columns={'confidence_x': 'confidence_main_responsible',
 
 final_mba_results[['confidence_main_responsible','confidence_secondary_responsible']] = final_mba_results[['confidence_main_responsible','confidence_secondary_responsible']]*100
 final_mba_results = final_mba_results[['Main_responsible','confidence_main_responsible','secondary_responsible','confidence_secondary_responsible','Target_Filler']]
-
-
-
 
 ##################### VISUALISING FINAL MBA RESULTS ##############
 
@@ -120,22 +105,3 @@ final.add_tools(hover)
 
 # show the results
 show(final)
-
-##################### VISUALISING FINAL RESULTS---state 4 and 5 ##############
-
-# # output to static HTML file
-# output_file("state4and5.html")
-
-# state4_5 = figure(title = 'Responsible machines for state 4 and 5',x_axis_label = 'Confidence',y_axis_label = 'Responsible Machines',plot_width=600, plot_height=600,y_range=final_mba_results['Main_responsible'].unique())
-
-# source = ColumnDataSource(data=responsible_machine_for_state_4_5)
-
-# state4_5.asterisk("confidence_main_responsible", "Main_responsible", source=source, size=15, color="#2ca02c",alpha=0.7)
-
-# hover = HoverTool()
-# hover.tooltips = [("confidence_main_responsible","@confidence_main_responsible"),("Main_responsible","@Main_responsible")]  ## define the content of the hover tooltip
-# state4_5.add_tools(hover)
-
-# # show the results
-# show(state4_5)
-
