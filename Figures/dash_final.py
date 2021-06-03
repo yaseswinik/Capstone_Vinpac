@@ -20,39 +20,14 @@ from bokeh.palettes import Category10_10
 
 engine = sqlalchemy.create_engine('postgresql+psycopg2://admin:admin@localhost:5432/capstone')
 
+
 # df = pd.read_sql_table('MachDetFillerStoppageEachDay', con=engine)
 # df = df.loc[~df.Status.isin(['Running','Off'])]
 
 linedf = pd.read_sql_table('MachStoppageforFillerAllDays', con=engine)
 
 
-# duration_text = []
-
-# def secondsToText(secs):
-#     if secs == 0:
-#         result = "0 secs"
-#     else:
-#         days = secs//86400
-#         hours = (secs - days*86400)//3600
-#         minutes = (secs - days*86400 - hours*3600)//60
-#         seconds = secs - days*86400 - hours*3600 - minutes*60
-#         days = round(days)
-#         hours = round(hours)
-#         minutes = round(minutes)
-#         seconds = round(seconds,2)
-        
-#         result = ("{0} day{1} ".format(days, "s" if days!=1 else "") if days else "") + \
-#         ("{0} hr{1} ".format(hours, "s" if hours!=1 else "") if hours else "") + \
-#         ("{0} min{1} ".format(minutes, "s" if minutes!=1 else "") if minutes else "") + \
-#         ("{0} sec{1} ".format(seconds, "s" if seconds!=1 else "") if seconds else "")
-#     return result
-
-# for value in linedf['duration_sec']:
-#     duration_text.append(secondsToText(value))
-#linedf['duration_hr'] = pd.to_datetime(linedf["duration_sec"], unit='s').dt.strftime("%H:%M:%S")
-#linedf['duration_text']= duration_text # pd.to_timedelta(linedf["duration_sec"]*(1e+9))
-
-linedf = linedf.loc[~linedf.Status.isin(['Running','Off'])]
+linedf = linedf.loc[~linedf.Status.isin(['Running','Off','Idle'])]
 
 linedf['duration_sec'] = round(linedf['duration_sec'],3)
 
@@ -191,18 +166,6 @@ def plotsubtabmachines(linedata, machine):
         
         hover = HoverTool(tooltips=[('Status', '@label'), ('Date', '$x{%F}'), ('Duration', '$y{‘00:00:00’}'),('Duration(s)', '$y{1.111}')], line_policy = 'next')
         
-#         y_custom = CustomJSHover(code="""
-#     d = Number(special_vars.data_y);
-#     var h = Math.floor(d / 3600);
-#     var m = Math.floor(d % 3600 / 60);
-#     var s = Math.floor(d % 3600 % 60);
-
-#     var hDisplay = h > 0 ? h + (h == 1 ? " hour, " : " hours, ") : "";
-#     var mDisplay = m > 0 ? m + (m == 1 ? " minute, " : " minutes, ") : "";
-#     var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
-#     return ''+ hDisplay + mDisplay + sDisplay; 
-    
-# """)
         hover.formatters = { "$x": "datetime", "$y": "numeral"}
         # Add the hover tool and styling
         p.add_tools(hover)
@@ -233,6 +196,7 @@ def plotsubtabmachines(linedata, machine):
         p.vbar(x='Status', top='avg_duration', width=0.9, source=source, color={'field': 'Status', 'transform': color_map})
         p.y_range.start = 0
         p.yaxis.formatter=NumeralTickFormatter(format="00:00:00")
+        p.xaxis.major_label_orientation = 3.4142/8
 
         return p
     
@@ -305,7 +269,7 @@ for fstatus in filler_status:
     
 tabs = Tabs(tabs=main_tabs_list)
 
-#show(tabs)
+show(tabs)
 
 curdoc().add_root(tabs)
 

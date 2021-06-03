@@ -59,7 +59,8 @@ def plot_graph_scatter(df_ss):
         # name of the y-axis 
         p.yaxis.axis_label = "No. of Times Status Changed"
         # graph.scatter("Duration in Hours", "Count", source=source, legend_field="Status", fill_alpha=0.4, size=12, color=factor_cmap('Status', 'Category10_10', df_ss['Status']))  
-        p.scatter("Duration_Hours", "Count", source=source, fill_alpha=0.6, size='Scale_size', color={'field': 'Status', 'transform': color_map})
+        p.scatter("Duration_Hours", "Count", source=source, fill_alpha=0.6, size='Scale_size', color={'field': 'Status', 'transform': color_map}, legend='Status')
+        p.legend.location = "top_left"
         p.yaxis.formatter = BasicTickFormatter(use_scientific=False)    
         labels = LabelSet(x='Duration_Hours', y='Count', text='Status', level='glyph',y_offset=5, source=source, render_mode='canvas', text_font_size='6pt')
         # graph.add_layout(graph.legend[0], 'right')
@@ -103,4 +104,4 @@ for machine in machine_names:
         plot_list.append(fig)
     else:
         missing_machine.append(machine)
-#show(plot_list)
+show(plot_list)

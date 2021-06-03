@@ -33,16 +33,16 @@ def plotoverallformachines(df):
         max_value_index = data.index[data['duration_sec']==data['duration_sec'].max()]
         sts = data['Status'][max_value_index]
         source = ColumnDataSource(data)
-        template="""                
-                <div style="color:<%= 
-                    (function colorfromint(){
-                        if (Status=="""+"'"+sts.iloc[0]+"'"+""")
-                            {return('red')}
-                        }()) %>;"> 
-                    <%= value %>
-                </div>
-                """
-        formatter =  HTMLTemplateFormatter(template=template)
+        # template="""                
+        #         <div style="color:<%= 
+        #             (function colorfromint(){
+        #                 if (Status=="""+"'"+sts.iloc[0]+"'"+""")
+        #                     {return('red')}
+        #                 }()) %>;"> 
+        #             <%= value %>
+        #         </div>
+        #         """
+        # formatter =  HTMLTemplateFormatter(template=template)
         fmt = NumberFormatter(format="00:00:00")
        # cmpfmt = CompositeFormatter(formatters=[formatter,fmt])
         
@@ -74,6 +74,8 @@ def getsubtabs(df):
 
 linedf = pd.read_csv('/Users/yases/OneDrive - University of South Australia/Semester 4/Capstone/Capstone Shared/Data/New Cleaned/MachDetFillerStoppageEachDay2020.csv')
 
+statusMapValues = {0:'Running', 1:'Safety Stopped', 2:'Starved', 3:'Blocked', 4:'Faulted', 5:'Unallocated', 6:'User Stopped', 7:'Off', 8:'Setup' , 9:'Runout', 10:'Idle'}
+linedf['Status'] = linedf['Status'].map(statusMapValues)
 
 linedf = linedf.loc[~linedf.Status.isin(['Running','Off','Idle'])]
 

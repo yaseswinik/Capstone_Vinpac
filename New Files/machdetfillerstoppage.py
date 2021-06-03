@@ -70,8 +70,8 @@ def machineDetailsFillerStop( ):
     del filler_0_4
     #Filler Unallocated Stopped
     filler_0_5 = pd.DataFrame()
-    filler_0_5['Start_Time'] = filler[(filler['Filler'] == 0) & (filler['Filler'].shift(-1) == 4)]['t_stamp'].reset_index(drop=True)
-    filler_0_5['End_Time'] = filler[(filler['Filler'] == 4) & (filler['Filler'].shift(1) == 0)]['t_stamp'].reset_index(drop=True)
+    filler_0_5['Start_Time'] = filler[(filler['Filler'] == 0) & (filler['Filler'].shift(-1) == 5)]['t_stamp'].reset_index(drop=True)
+    filler_0_5['End_Time'] = filler[(filler['Filler'] == 5) & (filler['Filler'].shift(1) == 0)]['t_stamp'].reset_index(drop=True)
     fstatus = 'Unallocated'
     dfn = dfn.append(getInbetStopDet(filler_0_5, cleaned, fstatus),ignore_index=True)
     del filler_0_5
@@ -84,8 +84,8 @@ def machineDetailsFillerStop( ):
     del filler_0_6  
 
     dfn['duration_sec']= round(dfn['duration_sec'],3)
-    statusMapValues = {0:'Running', 1:'Safety Stopped', 2:'Starved', 3:'Blocked', 4:'Faulted', 5:'Unallocated', 6:'User Stopped', 7:'Off', 8:'Setup' , 9:'Runout', 10:'Idle'}
-    dfn['Status'] = dfn['Status'].map(statusMapValues)
+    #statusMapValues = {0:'Running', 1:'Safety Stopped', 2:'Starved', 3:'Blocked', 4:'Faulted', 5:'Unallocated', 6:'User Stopped', 7:'Off', 8:'Setup' , 9:'Runout', 10:'Idle'}
+    #dfn['Status'] = dfn['Status'].map(statusMapValues)
 
     grp_dfn = dfn.groupby(['Filler_Status', 'Machine', dfn.Start_Time.dt.date, 'Status']).agg({'Count':'sum', 'duration_sec':'sum'}).reset_index()
     grp_dfn['avg_duration_sec'] = round(grp_dfn['duration_sec']/grp_dfn['Count'],3)
